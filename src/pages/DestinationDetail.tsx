@@ -156,7 +156,7 @@ const DestinationDetail: React.FC = () => {
             <div>
               <label
                 htmlFor="items"
-                className="block text-sm font-medium text-gray-700"
+                className="block mt-2 text-sm font-medium text-gray-700"
               >
                 Additional Items
               </label>
@@ -164,7 +164,7 @@ const DestinationDetail: React.FC = () => {
                 {menuItems.map((item, index) => (
                   <div
                     key={index}
-                    className="relative w-32 p-4 border border-gray-300 flex"
+                    className="relative p-4 border border-gray-300 flex"
                   >
                     <span className="text-gray-700">{item.name}</span>
                   </div>
