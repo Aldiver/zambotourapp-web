@@ -3,13 +3,18 @@ import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const UserDetail: React.FC = () => {
-  const { id } = useParams();
+
+interface userProps {
+  userDetail?: string | "";
+}
+
+const UserDetail: React.FC<userProps> = ({userDetail}) => {
+  const { id }  = useParams();
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const docRef = doc(db, 'users', id!);
+      const docRef = doc(db, 'users', id! ?? userDetail);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setUser(docSnap.data());

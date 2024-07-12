@@ -182,7 +182,7 @@ const AddDestinationForm: React.FC = () => {
 
                 await setDoc(docRefMenu, {
                     id: docRefMenu.id,
-                    tags: menuItems,
+                    menuItem: menuItems,
                 }, { merge: true });
             }
 

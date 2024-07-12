@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from '../firebase'; // Ensure you have your Firebase initialized and exported from 'firebase.js'
+import { doc, getDoc } from 'firebase/firestore';
 
 const Login = () => {
   const [error, setError] = useState(false);
@@ -11,19 +12,31 @@ const Login = () => {
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     // const user = { email };
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        dispatch({ type: "LOGIN", payload: user })
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Get the user document from Firestore
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        console.log('User data:', userData);
+
+        dispatch({ type: 'LOGIN', payload: { ...user, ...userData } });
         navigate('/');
-      })
-      .catch((error) => {
+      } else {
+        console.log('No such document!');
         setError(true);
-      });
+      }
+    } catch (error) {
+      console.error('Error signing in:', error);
+      setError(true);
+    }
   };
 
   return (

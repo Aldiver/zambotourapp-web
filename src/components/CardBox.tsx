@@ -7,7 +7,7 @@ interface CardBoxProps {
 
 const CardBox: React.FC<CardBoxProps> = ({ children }) => {
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md flex-1">
+    <div className="p-4 bg-white rounded-lg shadow-md ">
       {children}
     </div>
   );

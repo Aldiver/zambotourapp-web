@@ -7,7 +7,7 @@ interface SectionMainProps {
 
 const SectionMain: React.FC<SectionMainProps> = ({ children }) => {
   return (
-    <div className="p-6 bg-gray-100 mx-auto flex flex-col">
+    <div className="p-6 bg-gray-100 mx-auto flex flex-col h-full">
       {children}
     </div>
   );

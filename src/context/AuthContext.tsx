@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useReducer, ReactNode } from "react";
+import React, { createContext, useEffect, useReducer, ReactNode, useContext } from "react";
 import AuthReducer from "./AuthReducer";
 
 interface AuthState {

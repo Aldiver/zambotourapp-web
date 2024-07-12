@@ -1,19 +1,35 @@
-import React, { useContext, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import React, { useContext, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import Icon from "@mdi/react";
+import { mdiLogout } from "@mdi/js";
 
 const Sidebar = () => {
   const { currentUser } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const useAuth = () => useContext(AuthContext);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
+  const { dispatch } = useAuth();
+
+  const handleLogout = (e: React.FormEvent) => {
+    e.preventDefault();
+    dispatch({ type: "LOGOUT" });
+    localStorage.removeItem("user");
+  };
+
   return (
     <>
       <div className="lg:hidden p-4">
-        <button onClick={toggleSidebar} className="text-gray-500 focus:outline-none">
+        <button
+          onClick={toggleSidebar}
+          className="text-gray-500 focus:outline-none"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -21,13 +37,18 @@ const Sidebar = () => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16m-7 6h7"
+            />
           </svg>
         </button>
       </div>
       <div
         className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white lg:relative lg:translate-x-0 lg:shadow-none shadow-lg transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
         <div className="h-screen flex w-64 flex-col justify-between border-e bg-white">
@@ -42,10 +63,12 @@ const Sidebar = () => {
                   to="/"
                   className={({ isActive }) =>
                     `block rounded-lg px-4 py-2 text-sm font-medium ${
-                      isActive ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                      isActive
+                        ? "bg-gray-100 text-gray-700"
+                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                     }`
                   }
-                  onClick={isOpen ? toggleSidebar: () => {}}
+                  onClick={isOpen ? toggleSidebar : () => {}}
                 >
                   Dashboard
                 </NavLink>
@@ -55,10 +78,12 @@ const Sidebar = () => {
                   to="/users"
                   className={({ isActive }) =>
                     `block rounded-lg px-4 py-2 text-sm font-medium ${
-                      isActive ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                      isActive
+                        ? "bg-gray-100 text-gray-700"
+                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                     }`
                   }
-                  onClick={isOpen ? toggleSidebar: () => {}}
+                  onClick={isOpen ? toggleSidebar : () => {}}
                 >
                   Users
                 </NavLink>
@@ -68,10 +93,12 @@ const Sidebar = () => {
                   to="/destinations"
                   className={({ isActive }) =>
                     `block rounded-lg px-4 py-2 text-sm font-medium ${
-                      isActive ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                      isActive
+                        ? "bg-gray-100 text-gray-700"
+                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                     }`
                   }
-                  onClick={isOpen ? toggleSidebar: () => {}}
+                  onClick={isOpen ? toggleSidebar : () => {}}
                 >
                   Destinations
                 </NavLink>
@@ -81,10 +108,12 @@ const Sidebar = () => {
                   to="/menu"
                   className={({ isActive }) =>
                     `block rounded-lg px-4 py-2 text-sm font-medium ${
-                      isActive ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                      isActive
+                        ? "bg-gray-100 text-gray-700"
+                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                     }`
                   }
-                  onClick={isOpen ? toggleSidebar: () => {}}
+                  onClick={isOpen ? toggleSidebar : () => {}}
                 >
                   Menu
                 </NavLink>
@@ -94,10 +123,12 @@ const Sidebar = () => {
                   to="/account"
                   className={({ isActive }) =>
                     `block rounded-lg px-4 py-2 text-sm font-medium ${
-                      isActive ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                      isActive
+                        ? "bg-gray-100 text-gray-700"
+                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                     }`
                   }
-                  onClick={isOpen ? toggleSidebar: () => {}}
+                  onClick={isOpen ? toggleSidebar : () => {}}
                 >
                   Account
                 </NavLink>
@@ -105,22 +136,17 @@ const Sidebar = () => {
             </ul>
           </div>
 
-          <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
-            <a href="#" className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
-              <img
-                alt=""
-                src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                className="size-10 rounded-full object-cover"
-              />
+          <div className="px-4 flex justify-between cursor-pointer bottom-0 border-t border-gray-100">
+            <button
+              onClick={handleLogout}
+              className="flex flex-1 items-center gap-2 bg-white p-4 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            >
+              <Icon path={mdiLogout} size={1} />
 
-              <div>
-                <p className="text-xs">
-                  <strong className="block font-medium">Eric Frusciante</strong>
-
-                  <span> {currentUser?.email} </span>
-                </p>
-              </div>
-            </a>
+              <span className="w-full flex-1 grow text-ellipsis line-clamp-1 pr-12">
+                Logout
+              </span>
+            </button>
           </div>
         </div>
       </div>
