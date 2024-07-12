@@ -7,7 +7,7 @@ import DataTable from '../components/DataTable';
 const Destinations: React.FC = () => {
   return (
     <SectionMain>
-        <SectionTitle title="Destination" />
+        <SectionTitle title="Destination" route="add"/>
         <CardBox>
           <DataTable collectionName="destinations" />
         </CardBox>

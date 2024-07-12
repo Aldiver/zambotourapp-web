@@ -41,21 +41,5 @@ export async function getDownloadUrl(coverImageFile: File): Promise<string> {
 }
 
 export async function deleteDocument(collectionName: string, document: string){
-  if (collectionName === 'users') {
-    const docRef = doc(db, collectionName, document);
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-      const auth = getAuth();
-      const user = await auth.getUserByEmail(userData.email);
-      
-      if (user) {
-        await deleteUser(user);
-        console.log(`User with email ${userData.email} deleted from Auth`);
-      }
-    }
-  }
-  else
-    await deleteDoc(doc(db, collectionName, document));
+  await deleteDoc(doc(db, collectionName, document));
 }

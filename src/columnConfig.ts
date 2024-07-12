@@ -16,7 +16,7 @@ export const userColumns = [
     { key: 'coverImage', label: 'Cover Image', width: '150px' },
     { key: 'locationCoords', label: 'Location Coordinates', width: '200px' },
     { key: 'tags', label: 'Tags', width: '150px' },
-    { key: 'isFoodServiceEstablishment', label: 'Food Service', width: '150px' },
+    // { key: 'isFoodServiceEstablishment', label: 'Food Service', width: '150px' },
   ];
   
   export const menuColumns = [

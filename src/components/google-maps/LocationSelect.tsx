@@ -15,11 +15,11 @@ const ZAMBOANGA_LOCATION = { lat: 6.903861, lng: 122.076480 };
 
 
 interface LocationSelectProps {
-    initialPosition?: { lat: number; lng: number };
+    initialPosition?: { lat: number; lng: number } | null;
     onLocationChange: (location: { lat: number; lng: number }) => void;
 }
 
-const LocationSelect: React.FC<LocationSelectProps> = ({ onLocationChange }) => {
+const LocationSelect: React.FC<LocationSelectProps> = ({ onLocationChange, initialPosition }) => {
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(null);
     const [selectedPlace, setSelectedPlace] =
@@ -38,7 +38,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ onLocationChange }) => 
                 <Map
                     className='h-full w-full'
                     mapId={'DEMO_MAP_ID'} // Replace with your actual map ID if needed
-                    defaultCenter={ZAMBOANGA_LOCATION}
+                    defaultCenter={initialPosition ?? ZAMBOANGA_LOCATION}
                     defaultZoom={15}
                     gestureHandling={'greedy'}
                     disableDefaultUI={true}

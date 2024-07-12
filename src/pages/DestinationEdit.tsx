@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import { setDoc, collection, addDoc, GeoPoint } from 'firebase/firestore';
-import { db } from '../firebase';
-import { getDownloadUrl } from '../firebase/helpers';
-import LocationSelect from './google-maps/LocationSelect';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { GeoPoint, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db, storage } from '../firebase';
+import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+import LocationSelect from '../components/google-maps/LocationSelect';
 import { mdiAlphaXBox } from '@mdi/js';
 import Icon from '@mdi/react';
-import MenuItemModal from './MenuItemModal';
-import LoadingModal from './LoadingModal';
-import { useNavigate } from 'react-router-dom';
 
 interface FormData {
     name: string;
+    aveRating: number;
     description: string;
-    tags: string[];
     address: string;
+    tags: string[];
     isFoodServiceEstablishment: boolean;
     coverImage: File | null;
     images: File[];
@@ -21,36 +20,58 @@ interface FormData {
 
 const tagOptions = ['Mountain', 'Beach', 'Forest', 'City', 'Food', 'Beds'];
 
-const AddDestinationForm: React.FC = () => {
+const DestinationEdit: React.FC = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState<FormData>({
         name: '',
+        address: '',
+        aveRating: 0,
         description: '',
         tags: [],
-        address: '',
         isFoodServiceEstablishment: false,
         coverImage: null,
         images: [],
     });
-
     const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
     const [locationCoords, setLocationCoords] = useState<{ lat: number; lng: number } | null>(null);
+    const [existingCoverImage, setExistingCoverImage] = useState<string>('');
+    const [existingImages, setExistingImages] = useState<string[]>([]);
 
-    const [menuItems, setMenuItems] = useState<{ name: string; price: number }[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isSaving, setIsSaving] = useState(false);
+    useEffect(() => {
+        const fetchDestination = async () => {
+            const docRef = doc(db, 'destinations', id!);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const coverImageUrl = await getDownloadURL(ref(storage, data.coverImage));
+                const imageUrls = await Promise.all(data.images.map((imgPath: string) => getDownloadURL(ref(storage, imgPath))));
 
-    const handleAddMenuItem = (newMenuItem: { name: string; price: number }) => {
-        // Add the new item to menuItems state
-        setMenuItems([...menuItems, newMenuItem]);
-        setIsModalOpen(false);
-        console.log(menuItems); // Note: State updates are asynchronous, so this might not log immediately after setState
-    };
-
-    const handleRemoveItem = (index: number) => {
-        const newItems = menuItems.filter((_, i) => i !== index);
-        setMenuItems(newItems);
-    };
+                setFormData({
+                    name: data.name,
+                    address: data.address,
+                    description: data.description,
+                    aveRating: data.aveRating,
+                    tags: data.tags,
+                    isFoodServiceEstablishment: data.isFoodServiceEstablishment,
+                    coverImage: null,
+                    images: [],
+                });
+                setExistingCoverImage(data.coverImage);
+                setExistingImages(data.images);
+                setLocationCoords({lat: data.locationCoords.latitude, lng: data.locationCoords.longitude});
+                setCoverImagePreview(coverImageUrl);
+                setImagePreviews(imageUrls);
+                setLoading(false);
+            } else {
+                console.log('No such document!');
+                setLoading(false);
+            }
+        };
+        fetchDestination();
+    }, [id]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -65,6 +86,7 @@ const AddDestinationForm: React.FC = () => {
                 ...formData,
                 [name]: value,
             });
+        console.log(formData);
         }
     };
 
@@ -99,6 +121,66 @@ const AddDestinationForm: React.FC = () => {
         });
     };
 
+    const uploadFile = (file: File, path: string) => {
+        return new Promise<string>((resolve, reject) => {
+            const fileRef = ref(storage, path);
+            const uploadTask = uploadBytesResumable(fileRef, file);
+
+            uploadTask.on('state_changed',
+                () => { },
+                (error) => reject(error),
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then(resolve).catch(reject);
+                }
+            );
+        });
+    };
+
+    const handleSaveDestination = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        try {
+            const docRef = doc(db, 'destinations', id!);
+            const updates: any = {
+                name: formData.name,
+                address: formData.address,
+                aveRating: formData.aveRating,
+                description: formData.description,
+                tags: formData.tags.map(tag => tag.trim()),
+                locationCoords: new GeoPoint(locationCoords!.lat, locationCoords!.lng),
+                isFoodServiceEstablishment: formData.isFoodServiceEstablishment,
+            };
+
+            if (formData.coverImage) {
+                if (formData.coverImage.name !== existingCoverImage) {
+                    updates.coverImage = await uploadFile(formData.coverImage, `coverImages/${formData.coverImage.name}`);
+                }
+            } else {
+                updates.coverImage = existingCoverImage;
+            }
+
+            if (formData.images.length > 0) {
+                const newImageFiles = formData.images.filter(file => !existingImages.includes(file.name));
+                if (newImageFiles.length > 0) {
+                    const imageUrls = await Promise.all(
+                        newImageFiles.map(file => uploadFile(file, `images/${file.name}`))
+                    );
+                    updates.images = [...existingImages, ...imageUrls];
+                } else {
+                    updates.images = existingImages;
+                }
+            } else {
+                updates.images = existingImages;
+            }
+
+            await updateDoc(docRef, updates);
+            console.log('Destination updated successfully!');
+            navigate(`/destinations/${id}`);
+        } catch (error) {
+            console.error('Error updating destination:', error);
+        }
+    };
+
     const handleTagChange = (tag: string) => {
         if (formData.tags.includes(tag)) {
             setFormData({
@@ -123,86 +205,12 @@ const AddDestinationForm: React.FC = () => {
         setFormData({ ...formData, images: newImages });
     };
 
-    const history = useNavigate();
-
-    const handleSaveDestination = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsSaving(true);
-        try {
-            const docRef = await addDoc(collection(db, "destinations"), {
-                name: formData.name,
-                description: formData.description,
-                address: formData.address,
-                tags: formData.tags.map(tag => tag.trim()),
-            });
-
-            // Upload cover image to Firebase Storage
-            const coverImageFile = formData.coverImage;
-            const coverImageUrl: string = coverImageFile ? await getDownloadUrl(coverImageFile) : "";
-            console.log(`Cover image file name is ${coverImageUrl}`);
-
-            // Upload images to Firebase Storage
-            const imageUrls = await Promise.all(
-                formData.images.map(async (imageFile) => {
-                    return await getDownloadUrl(imageFile);
-                })
-            );
-
-            console.log(coverImageUrl, imageUrls);
-            // Update Firestore document with destination details and uploaded image URLs
-            await setDoc(docRef, {
-                id: docRef.id,
-                isFoodServiceEstablishment: formData.isFoodServiceEstablishment,
-                aveRating: 0,
-                rating: 0,
-                coverImage: coverImageUrl,
-                images: imageUrls,
-                locationCoords: new GeoPoint(locationCoords!.lat, locationCoords!.lng),
-            }, { merge: true });
-
-            // Clear form after saving
-            setFormData({
-                name: '',
-                description: '',
-                tags: [],
-                address: '',
-                isFoodServiceEstablishment: false,
-                coverImage: null,
-                images: [],
-            });
-            setCoverImagePreview(null);
-            setImagePreviews([]);
-
-            console.log('Destination added successfully!');
-
-            if (formData.isFoodServiceEstablishment) {
-                const docRefMenu = await addDoc(collection(db, "menus"), {
-                    destinationId: docRef.id,
-                });
-
-                await setDoc(docRefMenu, {
-                    id: docRefMenu.id,
-                    tags: menuItems,
-                }, { merge: true });
-            }
-
-            history(`/destinations/${docRef.id}`);
-        } catch (error) {
-            console.error('Error adding destination:', error);
-        }
-        finally {
-            setIsSaving(false); // Finish saving state
-        }
-    };
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="mx-auto px-4 py-16 sm:px-6 lg:px-8 w-full">
-            <MenuItemModal
-                isOpen={isModalOpen}
-                onConfirm={handleAddMenuItem}
-                onCancel={() => setIsModalOpen(false)}
-            />
-            <LoadingModal isOpen={isSaving} />
             <div className="max-w-screen-lg mx-auto w-full">
                 <a
                     className="inline-flex items-center gap-2 rounded border border-indigo-600 bg-indigo-600 px-8 py-3 text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
@@ -242,7 +250,7 @@ const AddDestinationForm: React.FC = () => {
                             onChange={handleCoverImageChange}
                         />
                     </div>
-
+                    
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
                         <input
@@ -307,7 +315,7 @@ const AddDestinationForm: React.FC = () => {
                                         className="absolute top-0 right-0 bg-white text-red-500"
                                         onClick={() => handleRemoveImage(index)}
                                     >
-                                        <Icon path={mdiAlphaXBox} size={1} />
+                                         <Icon path={mdiAlphaXBox} size={1} />
                                     </button>
                                 </div>
                             ))}
@@ -344,29 +352,6 @@ const AddDestinationForm: React.FC = () => {
                             onChange={handleChange}
                         />
                     </div>
-
-                    {formData.isFoodServiceEstablishment && <div>
-                        <label htmlFor="items" className="block text-sm font-medium text-gray-700">Additional Items</label>
-                        <div className="mt-2 w-4/5 flex flex-wrap gap-2">
-                            {menuItems.map((item, index) => (
-                                <div key={index} className="relative w-32 h-32 border border-gray-300 bg-white flex items-center justify-center">
-
-                                    <button
-                                        type="button"
-                                        className="absolute top-0 right-0 bg-white text-red-500"
-                                        onClick={() => handleRemoveItem(index)}
-                                    >
-                                        <Icon path={mdiAlphaXBox} size={1} />
-                                    </button>
-                                    <span className="text-gray-700">{item.name}</span>
-                                </div>
-                            ))}
-                            <div onClick={() => setIsModalOpen(true)} className="relative w-32 h-32 border border-gray-300 bg-white bg-opacity-50 flex items-center justify-center cursor-pointer">
-                                <span className="text-gray-500">Add Menu Item</span>
-                            </div>
-                        </div>
-                    </div>}
-
                     <div className="flex justify-end mt-4">
                         <button
                             type="submit"
@@ -381,4 +366,4 @@ const AddDestinationForm: React.FC = () => {
     );
 };
 
-export default AddDestinationForm;
+export default DestinationEdit;

@@ -10,7 +10,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, onConfirm, onCancel
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex z-50 items-center justify-center bg-black bg-opacity-50">
       <div className="rounded-lg bg-white p-8 shadow-2xl">
         <h2 className="text-lg font-bold">Are you sure you want to do that?</h2>
         <p className="mt-2 text-sm text-gray-500">

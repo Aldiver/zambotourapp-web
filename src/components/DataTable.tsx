@@ -5,6 +5,7 @@ import { userColumns, destinationColumns, menuColumns } from '../columnConfig';
 import ActionButtons from './ActionButtons';
 import { deleteDocument } from '../firebase/helpers';
 import ConfirmModal from './ConfirmModal';
+import { useNavigate } from 'react-router-dom';
 
 interface DataTableProps {
   collectionName: string;
@@ -16,7 +17,6 @@ const DataTable: React.FC<DataTableProps> = ({ collectionName }) => {
   const [itemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string>("");
-
   const columnsConfig: { [key: string]: any[] } = {
     users: userColumns,
     destinations: destinationColumns,
@@ -24,7 +24,8 @@ const DataTable: React.FC<DataTableProps> = ({ collectionName }) => {
   };
 
   const columns = columnsConfig[collectionName];
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     fetchData();
   }, [collectionName]);
@@ -39,14 +40,12 @@ const DataTable: React.FC<DataTableProps> = ({ collectionName }) => {
     setCurrentPage(page);
   };
 
-  const handleView = (item) => {
-    console.log('View item:', item);
-    // Implement view logic here
+  const handleView = (id: string) => {
+    navigate(`/${collectionName}/${id}`);
   };
 
-  const handleEdit = (item) => {
-    console.log('Edit item:', item);
-    // Implement edit logic here
+  const handleEdit = (id: string) => {
+    navigate(`/${collectionName}/edit/${id}`);
   };
 
   const handleDelete = () => {
@@ -82,14 +81,16 @@ const DataTable: React.FC<DataTableProps> = ({ collectionName }) => {
                     {col.label}
                   </th>
                 ))}
-                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Action</th>
+                {collectionName !== 'users' && (
+                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Action</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {paginatedData.map((item) => (
                 <tr key={item.id}>
                   {columns.map((col) => (
-                    <td key={col.key} className="whitespace-nowrap px-4 py-2 text-gray-700">
+                    <td key={col.key} className="whitespace-nowrap px-4 py-2 text-gray-700" onClick={() => handleView(item.id)}>
                       {col.key === 'locationCoords'
                         ? item[col.key]
                           ? `${item[col.key].latitude}, ${item[col.key].longitude}`
@@ -103,13 +104,14 @@ const DataTable: React.FC<DataTableProps> = ({ collectionName }) => {
                             : item[col.key]}
                     </td>
                   ))}
-                  <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                    <ActionButtons
-                      onView={() => handleView(item.id)}
-                      onEdit={() => handleEdit(item.id)}
-                      onDelete={() => handleDeleteClick(item.id)}
-                    />
-                  </td>
+                  {collectionName !== 'users' && (
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                      <ActionButtons
+                        onEdit={() => handleEdit(item.id)}
+                        onDelete={() => handleDeleteClick(item.id)}
+                      />
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

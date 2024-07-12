@@ -10,6 +10,9 @@ import Account from './pages/Account';
 import Destinations from './pages/Destinations';
 import AddUserForm from './components/AddUserForm';
 import AddDestination from './pages/AddDestination';
+import UserDetail from './pages/UserDetail';
+import DestinationDetail from './pages/DestinationDetail';
+import DestinationEdit from './pages/DestinationEdit';
 
 interface RequireAuthProps {
   children: ReactNode;
@@ -21,7 +24,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
     <div className="max-h-screen overflow-hidden">
       {currentUser ? children : <Navigate to="/login" />}
     </div>
-  ) 
+  )
 };
 
 const App: React.FC = () => {
@@ -41,8 +44,11 @@ const App: React.FC = () => {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<Users />} />
             <Route path="users/add" element={<AddUserForm />} />
+            <Route path="users/:id" element={<UserDetail />} />
             <Route path="destinations" element={<Destinations />} />
             <Route path="destinations/add" element={<AddDestination />} />
+            <Route path="destinations/:id" element={<DestinationDetail />} />
+            <Route path="destinations/edit/:id" element={<DestinationEdit />} />
             <Route path="menu" element={<Menu />} />
             <Route path="account" element={<Account />} />
           </Route>
