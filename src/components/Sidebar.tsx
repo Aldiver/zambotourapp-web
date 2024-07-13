@@ -4,13 +4,13 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Icon from "@mdi/react";
 import { mdiLogout } from "@mdi/js";
+import AppLogo from "./AppLogo";
 
 const Sidebar = () => {
   const { currentUser } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const useAuth = () => useContext(AuthContext);
-
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -53,12 +53,10 @@ const Sidebar = () => {
       >
         <div className="h-screen flex w-64 flex-col justify-between border-e bg-white">
           <div className="flex-1 px-4 py-6">
-            <span className="grid h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
-              Logo
-            </span>
+          <AppLogo />
 
             <ul className="mt-6 space-y-1">
-              <li>
+              {/* <li>
                 <NavLink
                   to="/"
                   className={({ isActive }) =>
@@ -72,7 +70,7 @@ const Sidebar = () => {
                 >
                   Dashboard
                 </NavLink>
-              </li>
+              </li> */}
               <li>
                 <NavLink
                   to="/users"

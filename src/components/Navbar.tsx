@@ -2,8 +2,8 @@ import React from 'react';
 
 const Navbar = () => {
   return (
-    <nav className="bg-gray-800 p-4 text-white">
-      <h1 className="text-lg">Navbar</h1>
+    <nav className="bg-orange-theme-500 flex p-4 text-white border-b-2 border-white">
+      <span className="text-3xl font-bold">ZamboTourApp Admin Panel</span>
     </nav>
   );
 };

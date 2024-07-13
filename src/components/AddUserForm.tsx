@@ -69,7 +69,7 @@ const AddUserForm: React.FC = () => {
     <div className="mx-auto px-4 py-16 sm:px-6 lg:px-8 w-full">
       <div className="max-w-screen-lg mx-auto w-full">
         <a
-          className="inline-flex items-center gap-2 rounded border border-indigo-600 bg-indigo-600 px-8 py-3 text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+          className="inline-flex items-center gap-2 rounded border border-orange-theme-500 bg-orange-theme-500 px-8 py-3 text-white hover:bg-transparent hover:text-orange-theme-500 focus:outline-none focus:ring active:text-indigo-500"
           href="/users"
         >
           <svg
@@ -167,7 +167,7 @@ const AddUserForm: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="block w-full md:w-4/5 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white"
+            className="block w-full md:w-4/5 rounded-lg bg-orange-theme-500 px-5 py-3 text-sm font-medium text-white"
           >
             Submit
           </button>

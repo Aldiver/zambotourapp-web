@@ -1,6 +1,6 @@
 // src/components/SectionTitle.tsx
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 interface SectionTitleProps {
   title: string;
@@ -8,7 +8,11 @@ interface SectionTitleProps {
   route?: string;
 }
 
-const SectionTitle: React.FC<SectionTitleProps> = ({ title, subtitle, route }) => {
+const SectionTitle: React.FC<SectionTitleProps> = ({
+  title,
+  subtitle,
+  route,
+}) => {
   return (
     <div className="flex flex-col md:flex-row items-center justify-between mb-6">
       <div>
@@ -17,9 +21,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({ title, subtitle, route }) =
       </div>
       {route && route.trim() !== "" && (
         <Link to={route}>
-          <button
-            className="mt-4 md:mt-0 md:ml-4 w-full md:w-auto rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white"
-          >
+          <button className="inline-flex items-center gap-2 rounded border bg-orange-theme-500 px-8 py-3 text-white hover:bg-transparent hover:text-orange-theme-500 focus:outline-none focus:ring active:text-orange-theme-500">
             Create
           </button>
         </Link>

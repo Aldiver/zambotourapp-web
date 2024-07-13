@@ -307,7 +307,7 @@ const DestinationEdit: React.FC = () => {
       <LoadingModal isOpen={isSaving} />
       <div className="max-w-screen-lg mx-auto w-full">
         <a
-          className="inline-flex items-center gap-2 rounded border border-indigo-600 bg-indigo-600 px-8 py-3 text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+          className="inline-flex items-center gap-2 rounded border border-orange-theme-500 bg-orange-theme-500 px-8 py-3 text-white hover:bg-transparent hover:text-orange-theme-500 focus:outline-none focus:ring active:text-indigo-500"
           href="/destinations"
         >
           <svg
@@ -471,8 +471,8 @@ const DestinationEdit: React.FC = () => {
                   type="button"
                   className={`px-3 py-1 border rounded-lg ${
                     formData.tags.includes(tag)
-                      ? "bg-indigo-600 text-white"
-                      : "bg-white text-indigo-600 border-indigo-600"
+                      ? "bg-orange-theme-500 text-white"
+                      : "bg-white text-orange-theme-500 border-orange-theme-500"
                   }`}
                   onClick={() => handleTagChange(tag)}
                 >
@@ -491,7 +491,7 @@ const DestinationEdit: React.FC = () => {
             <input
               type="checkbox"
               name="isFoodServiceEstablishment"
-              className="form-checkbox h-4 w-4 text-indigo-600"
+              className="form-checkbox h-4 w-4 text-orange-theme-500"
               checked={formData.isFoodServiceEstablishment}
               onChange={handleChange}
             />
@@ -534,7 +534,7 @@ const DestinationEdit: React.FC = () => {
           <div className="flex justify-end mt-4">
             <button
               type="submit"
-              className="inline-flex items-center gap-2 rounded border border-indigo-600 bg-indigo-600 px-8 py-3 text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+              className="inline-flex items-center gap-2 rounded border border-orange-theme-500 bg-orange-theme-500 px-8 py-3 text-white hover:bg-transparent hover:text-orange-theme-500 focus:outline-none focus:ring active:text-indigo-500"
             >
               Save Changes
             </button>
