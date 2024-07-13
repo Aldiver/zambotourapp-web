@@ -13,6 +13,7 @@ import AddDestination from './pages/AddDestination';
 import UserDetail from './pages/UserDetail';
 import DestinationDetail from './pages/DestinationDetail';
 import DestinationEdit from './pages/DestinationEdit';
+import LandingPage from './pages/LandingPage';
 
 interface RequireAuthProps {
   children: ReactNode;
@@ -22,7 +23,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
   return (
     <div className="max-h-screen overflow-hidden">
-      {currentUser ? children : <Navigate to="/login" />}
+      {currentUser ? children : <Navigate to="/home" />}
     </div>
   )
 };
@@ -32,6 +33,7 @@ const App: React.FC = () => {
     <AuthContextProvider>
       <Router>
         <Routes>
+          <Route path="/home" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route
             path="/*"

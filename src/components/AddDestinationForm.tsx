@@ -202,7 +202,7 @@ const AddDestinationForm: React.FC = () => {
                 onConfirm={handleAddMenuItem}
                 onCancel={() => setIsModalOpen(false)}
             />
-            <LoadingModal isOpen={isSaving} />
+            <LoadingModal isOpen={isSaving} label="Saving..." />
             <div className="max-w-screen-lg mx-auto w-full">
                 <a
                     className="inline-flex items-center gap-2 rounded border border-orange-theme-500 bg-orange-theme-500 px-8 py-3 text-white hover:bg-transparent hover:text-orange-theme-500 focus:outline-none focus:ring active:text-indigo-500"
