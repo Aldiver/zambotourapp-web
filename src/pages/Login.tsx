@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase"; // Ensure you have your Firebase initialized and exported from 'firebase.js'
 import { doc, getDoc } from "firebase/firestore";
@@ -50,12 +50,12 @@ const Login = () => {
           <section className="relative hidden lg:flex h-32 items-end bg-gray-900/90 lg:col-span-5 lg:h-full xl:col-span-6">
             <img
               alt=""
-              src="src/asssets/Fort_Pilar,_Zamboanga_City_2015.jpg"
+              src="/assets/fort_pilar.jpg"
               className="absolute inset-0 h-full w-full object-cover opacity-80"
             />
 
             <div className="hidden lg:relative lg:block lg:p-12">
-              <a className="block text-white" href="#">
+              <Link className="block text-white" to="home">
                 <span className="sr-only">Home</span>
                 <svg
                   className="h-8 sm:h-10"
@@ -68,7 +68,7 @@ const Login = () => {
                     fill="currentColor"
                   />
                 </svg>
-              </a>
+              </Link>
 
               <h2 className="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
                 Welcome to Zambo Tour App

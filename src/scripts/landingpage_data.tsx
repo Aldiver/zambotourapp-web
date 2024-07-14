@@ -68,7 +68,7 @@ export const people = [
   {
     name: "Abbie Amparo",
     role: "Frontend Developer",
-    imageUrl: "src/asssets/abbie.jpg",
+    imageUrl: "/assets/abbie.jpg",
     bio: "Ultricies massa malesuada viverra cras lobortis. Tempor orci hac ligula dapibus mauris sit ut eu. Eget turpis urna maecenas cras. Nisl dictum.",
     twitterUrl: "#",
     linkedinUrl: "#",
@@ -77,7 +77,7 @@ export const people = [
   {
     name: "Princess Mae Jamsuri",
     role: "Backend Developer",
-    imageUrl: "src/asssets/cez.jpg",
+    imageUrl: "/assets/cez.jpg",
     bio: "Ultricies massa malesuada viverra cras lobortis. Tempor orci hac ligula dapibus mauris sit ut eu. Eget turpis urna maecenas cras. Nisl dictum.",
     twitterUrl: "#",
     linkedinUrl: "#",
@@ -86,7 +86,7 @@ export const people = [
   {
     name: "Rina Laine Cruz",
     role: "Front End Developer",
-    imageUrl: "src/asssets/cez.jpg",
+    imageUrl: "/assets/rina.jpg",
     bio: "Ultricies massa malesuada viverra cras lobortis. Tempor orci hac ligula dapibus mauris sit ut eu. Eget turpis urna maecenas cras. Nisl dictum.",
     twitterUrl: "#",
     linkedinUrl: "#",
@@ -113,7 +113,7 @@ export const posts = [
     date: "Mar 16, 2020",
     datetime: "2020-03-16",
     imageUrl:
-      "src/asssets/food-tripping-in-zamboanga.webp",
+      "/assets/food-tripping-in-zamboanga.webp",
     readingTime: "6 min",
     author: {
       name: "Roel Aufderehar",
@@ -140,7 +140,7 @@ export const posts = [
     date: "Mar 10, 2020",
     datetime: "2020-03-10",
     imageUrl:
-      "src/asssets/hermosa-festival.jpg",
+      "/assets/hermosa-festival.jpg",
     readingTime: "4 min",
     author: {
       name: "Brenna Goyette",
@@ -167,7 +167,7 @@ export const posts = [
     date: "Feb 12, 2020",
     datetime: "2020-02-12",
     imageUrl:
-      "src/asssets/c5.jpg",
+      "/assets/c5.jpg",
     readingTime: "11 min",
     author: {
       name: "Daniela Metz",
