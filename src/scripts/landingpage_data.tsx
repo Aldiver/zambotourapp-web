@@ -66,7 +66,7 @@ export const navigation = [
 
 export const people = [
   {
-    name: "Abbie Amparo",
+    name: "Abiegail Amparo",
     role: "Frontend Developer",
     imageUrl: "/assets/abbie.jpg",
     bio: "Ultricies massa malesuada viverra cras lobortis. Tempor orci hac ligula dapibus mauris sit ut eu. Eget turpis urna maecenas cras. Nisl dictum.",

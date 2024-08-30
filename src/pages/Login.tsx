@@ -7,7 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 import LoadingModal from "../components/LoadingModal";
 
 const Login = () => {
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { dispatch } = useContext(AuthContext);
@@ -16,35 +16,48 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError(""); // Reset the error message
     try {
       setShowModal(true);
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       // Get the user document from Firestore
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
 
-      if (userDocSnap.exists()) {
-        const userData = userDocSnap.data();
-        console.log("User data:", userData);
-
-        dispatch({ type: "LOGIN", payload: { ...user, ...userData } });
-        navigate("/");
-      } else {
-        console.log("No such document!");
-        setError(true);
+      if (!userDocSnap.exists()) {
+        setError("Invalid email or password.");
+        setShowModal(false);
+        return;
       }
+
+      const userData = userDocSnap.data();
+
+      if (userData.role !== "admin") {
+        setError("Only admins can sign in to this page.");
+        setShowModal(false);
+        return;
+      }
+
+      console.log("User data:", userData);
+
+      dispatch({ type: "LOGIN", payload: { ...user, ...userData } });
+      navigate("/");
     } catch (error) {
       console.error("Error signing in:", error);
-      setError(true);
+      setError("Invalid email or password.");
       setShowModal(false);
     }
   };
 
   return (
     <div className="h-screen bg-white">
-      <LoadingModal isOpen={showModal} label="Logging in..."/>
+      <LoadingModal isOpen={showModal} label="Logging in..." />
       <section className="bg-white">
         <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
           <section className="relative hidden lg:flex h-32 items-end bg-gray-900/90 lg:col-span-5 lg:h-full xl:col-span-6">
@@ -94,10 +107,11 @@ const Login = () => {
                     Sign in to your account
                   </h1>
                   {error && (
-                    <p className="text-red-500 text-xs italic mb-4">
-                      Invalid email or password.
-                    </p>
+                    <div className="col-span-6 text-red-500 text-sm">
+                      {error}
+                    </div>
                   )}
+
                   <div className="mb-4">
                     <label
                       className="block text-gray-700 text-sm font-bold mb-2"

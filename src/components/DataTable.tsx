@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import { userColumns, destinationColumns, menuColumns } from '../columnConfig';
+import { userColumns, destinationColumns, menuColumns, itineraryColumns } from '../columnConfig';
 import ActionButtons from './ActionButtons';
-import { deleteDocument } from '../firebase/helpers';
+import { deleteDocument, deleteUserFunction } from '../firebase/helpers';
 import ConfirmModal from './ConfirmModal';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,6 +21,7 @@ const DataTable: React.FC<DataTableProps> = ({ collectionName }) => {
     users: userColumns,
     destinations: destinationColumns,
     menus: menuColumns,
+    itineraries: itineraryColumns,
   };
 
   const columns = columnsConfig[collectionName];
@@ -50,6 +51,9 @@ const DataTable: React.FC<DataTableProps> = ({ collectionName }) => {
 
   const handleDelete = () => {
     deleteDocument(collectionName, itemToDelete);
+    if(collectionName === 'users'){
+      deleteUserFunction(itemToDelete);
+    }
     console.log('Delete item:', itemToDelete);
     setItemToDelete("");
     setIsModalOpen(false);
@@ -104,14 +108,14 @@ const DataTable: React.FC<DataTableProps> = ({ collectionName }) => {
                             : item[col.key]}
                     </td>
                   ))}
-                  {collectionName !== 'users' && (
+                  
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                       <ActionButtons
                         onEdit={() => handleEdit(item.id)}
                         onDelete={() => handleDeleteClick(item.id)}
                       />
                     </td>
-                  )}
+      
                 </tr>
               ))}
             </tbody>

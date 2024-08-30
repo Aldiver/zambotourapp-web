@@ -103,6 +103,21 @@ const Sidebar = () => {
               </li>
               <li>
                 <NavLink
+                  to="/itinerary"
+                  className={({ isActive }) =>
+                    `block rounded-lg px-4 py-2 text-sm font-medium ${
+                      isActive
+                        ? "bg-gray-100 text-gray-700"
+                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                    }`
+                  }
+                  onClick={isOpen ? toggleSidebar : () => {}}
+                >
+                  Itinerary
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
                   to="/menu"
                   className={({ isActive }) =>
                     `block rounded-lg px-4 py-2 text-sm font-medium ${

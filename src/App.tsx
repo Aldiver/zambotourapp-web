@@ -14,6 +14,11 @@ import UserDetail from './pages/UserDetail';
 import DestinationDetail from './pages/DestinationDetail';
 import DestinationEdit from './pages/DestinationEdit';
 import LandingPage from './pages/LandingPage';
+import UserEdit from './pages/UserEdit';
+import Itinerary from './pages/Itinerary';
+import ItineraryEdit from './pages/ItineraryEdit';
+import ItineraryDetail from './pages/ItineraryDetail';
+import AddItineraryForm from './components/AddItineraryForm';
 
 interface RequireAuthProps {
   children: ReactNode;
@@ -47,6 +52,11 @@ const App: React.FC = () => {
             <Route path="users" element={<Users />} />
             <Route path="users/add" element={<AddUserForm />} />
             <Route path="users/:id" element={<UserDetail />} />
+            <Route path="users/edit/:id" element={<UserEdit />} />
+            <Route path="itinerary" element={<Itinerary />} />
+            <Route path="itinerary/add" element={<AddItineraryForm />} />
+            <Route path="itineraries/:id" element={<ItineraryDetail />} />
+            <Route path="itineraries/edit/:id" element={<ItineraryEdit />} />
             <Route path="destinations" element={<Destinations />} />
             <Route path="destinations/add" element={<AddDestination />} />
             <Route path="destinations/:id" element={<DestinationDetail />} />

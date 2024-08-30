@@ -1,19 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
-import { v4 as uuidv4 } from "uuid";
-import LoadingModal from "./LoadingModal";
-import { useNavigate } from "react-router-dom";
+import LoadingModal from "../components/LoadingModal";
+import { useNavigate, useParams } from "react-router-dom";
+
+interface FormData {
+  email: string;
+  name: string;
+  role: string; // Default role to "user"
+}
 
 const AddUserForm: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const { id } = useParams();
+  const [formData, setFormData] = useState<FormData>({
     email: "",
     name: "",
     role: "", // Default role to "user"
-    password: "",
-    confirmPassword: "",
   });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const docRef = doc(db, "users", id!);
+      
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+       
+        setFormData({
+          name: data.name,
+          email: data.email,
+          role: data.role,
+        });
+     
+        setLoading(false);
+      } else {
+        console.log("No such document!");
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, [id]);
 
   const [errors, setErrors] = useState({
     passwordMismatch: false,
@@ -34,40 +62,28 @@ const AddUserForm: React.FC = () => {
   const handleSaveUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSaving(true);
-    if (formData.password !== formData.confirmPassword) {
-      setErrors({ ...errors, passwordMismatch: true });
-      return;
-    }
+  
 
     try {
-      const res = await createUserWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
-      );
-
-      const userDocRef = doc(db, "users", res.user.uid);
-
-      await setDoc(userDocRef, {
-        userId: res.user.uid,
-        email: formData.email,
+      const docRef = doc(db, "users", id!);
+      const updates: any = {
         name: formData.name,
-        role: formData.role || "user", // Default role to "user" if not specified
-      });
+        role: formData.role,
+      };
 
       // Clear form after saving
       setFormData({
         email: "",
         name: "",
         role: "",
-        password: "",
-        confirmPassword: "",
       });
+
+      await updateDoc(docRef, updates);
 
       setErrors({ passwordMismatch: false });
 
       console.log("User added successfully!");
-      navigate(`/users/${userDocRef.id}`);
+      navigate(`/users/${docRef.id}`);
     } catch (error) {
       console.error("Error adding user:", error);
     } finally {
@@ -132,7 +148,7 @@ const AddUserForm: React.FC = () => {
                 placeholder="Enter email"
                 value={formData.email}
                 onChange={handleChange}
-                required
+                disabled
               />
             </div>
           </div>
@@ -156,41 +172,7 @@ const AddUserForm: React.FC = () => {
               </select>
             </div>
           </div>
-          <div>
-            <label htmlFor="password" className="sr-only">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type="password"
-                name="password"
-                className="w-full md:w-4/5 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
-                placeholder="Enter password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="confirmPassword" className="sr-only">
-              Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                type="password"
-                name="confirmPassword"
-                className="w-full md:w-4/5 rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
-                placeholder="Confirm password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            {errors.passwordMismatch && (
-              <p className="text-red-500 text-sm">Passwords do not match.</p>
-            )}
-          </div>
+          
           <button
             type="submit"
             className="block w-full md:w-4/5 rounded-lg bg-orange-theme-500 px-5 py-3 text-sm font-medium text-white"
